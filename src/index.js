@@ -1,11 +1,10 @@
-import { cwd } from 'node:process';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { resolve, extname } from 'path';
+import { readFileSync } from 'fs';
 import _ from 'lodash';
 
-const getfilepath = (filepath) => resolve(cwd(), filepath);
+const getFixturePath = (filepath) => resolve(process.cwd(), filepath);
 
-const readFile = (path) => readFileSync(path, 'utf-8');
+const readFile = (filepath) => readFileSync(getFixturePath(filepath, 'utf-8'));
 
 const parsesFile = (file) => JSON.parse(file);
 
@@ -19,6 +18,13 @@ const getDiffInformation = (data1, data2) => {
   const result = keys.map((key) => {
     const value1 = data1[key];
     const value2 = data2[key];
+    if (_.isEqual(value1, value2)) {
+      return {
+        type: 'unchanges',
+        key,
+        value: value1,
+      };
+    }
     if (value1 && value2 && value1 !== value2) {
       return {
         type: 'changed',
@@ -51,8 +57,8 @@ const getDiffInformation = (data1, data2) => {
 };
 
 const genDiff = (filepath1, filepath2) => {
-  const file1 = readFile(getfilepath(filepath1));
-  const file2 = readFile(getfilepath(filepath2));
+  const file1 = readFile(filepath1);
+  const file2 = readFile(filepath2);
 
   const informationDiff = getDiffInformation(parsesFile(file1), parsesFile(file2));
   // console.log(informationDiff);
@@ -74,5 +80,4 @@ const genDiff = (filepath1, filepath2) => {
   // console.log(`{\n${result.join('\n')}\n}`);
   return `{\n${result.join('\n')}\n}`;
 };
-
 export default genDiff;
