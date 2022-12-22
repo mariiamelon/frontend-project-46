@@ -1,19 +1,20 @@
 import { resolve, extname } from 'path';
 import { readFileSync } from 'fs';
 import _ from 'lodash';
+import parsers from './parse.js';
+//import format from './formatters/index.js';
+
+const getFormat = (filepath) => extname(filepath).slice(1);
 
 const getFixturePath = (filepath) => resolve(process.cwd(), filepath);
 
 const readFile = (filepath) => readFileSync(getFixturePath(filepath, 'utf-8'));
-
-const parsesFile = (file) => JSON.parse(file);
 
 const getDiffInformation = (data1, data2) => {
   const keys1 = Object.keys(data1);
   const keys2 = Object.keys(data2);
 
   const keys = _.sortBy(_.union(keys1, keys2));
-  // console.log('🚀 ~ file: index.js:29 ~ getDiffInformation ~ keys', keys);
 
   const result = keys.map((key) => {
     const value1 = data1[key];
@@ -57,10 +58,13 @@ const getDiffInformation = (data1, data2) => {
 };
 
 const genDiff = (filepath1, filepath2) => {
-  const file1 = readFile(filepath1);
-  const file2 = readFile(filepath2);
+  const readFile1 = readFile(filepath1);
+  const readFile2 = readFile(filepath2);
 
-  const informationDiff = getDiffInformation(parsesFile(file1), parsesFile(file2));
+  const informationDiff = getDiffInformation(
+    parsers(readFile1, getFormat(filepath1)),
+    parsers(readFile2, getFormat(filepath2)),
+  );
   // console.log(informationDiff);
   const result = informationDiff.map((diff) => {
     const typeDiff = diff.type;

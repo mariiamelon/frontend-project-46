@@ -14,5 +14,5 @@ const correct = readFixture('expected1.txt');
 
 test('difference', () => {
   expect(gendiff('__fixtures__/file1.json', '__fixtures__/file2.json')).toBe(correct);
-  // expect(gendiff('__fixtures__/file1.yml', '__fixtures__/file2.yml')).toBe(correct);
+  expect(gendiff('__fixtures__/file1.yml', '__fixtures__/file2.yml')).toBe(correct);
 });
