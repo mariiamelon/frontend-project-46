@@ -34,14 +34,14 @@ const getDiffInformation = (data1, data2) => {
         value2,
       };
     }
-    if (!Object.hasOwn(data2, key)) {
+    if (!_.has(data2, key)) {
       return {
         type: 'delited',
         key,
         value: value1,
       };
     }
-    if (!Object.hasOwn(data1, key)) {
+    if (!_.has(data1, key)) {
       return {
         type: 'added',
         key,
